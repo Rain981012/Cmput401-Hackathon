@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.http import JsonResponse, QueryDict
 from django.contrib.auth.models import User
-from .models import Event,Attend
+from .models import Event, Attend
 
 from .util import get, require
 
@@ -21,11 +23,13 @@ def create_event(request):
         description = require(event_data, 'description', str)
         latitude = require(event_data, 'latitude', float)
         longitude = require(event_data, 'longitude', float)
-        start_time = require(event_data, 'startTime', float)
-        end_time = require(event_data, 'endTime', float)
+        start_time = datetime.fromtimestamp(
+            require(event_data, 'startTime', float))
+        end_time = datetime.fromtimestamp(
+            require(event_data, 'endTime', float))
         min_people = get(event_data, 'minPeople')
         max_people = get(event_data, 'maxPeople')
-    except (KeyError, TypeError) as e:
+    except (KeyError, TypeError, ValueError) as e:
         return JsonResponse({'success': False, 'error': e.args[0]})
 
     event = Event(event_name=name,
@@ -53,6 +57,7 @@ def create_user(request):
     user = User.objects.create_user(name)
     return JsonResponse({'success': True, 'userId': user.id})
 
+
 def attend_event(request):
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'invalid request'})
@@ -65,11 +70,14 @@ def attend_event(request):
         if event.exists() == True:
             return JsonResponse({'success': True})
         else:
-            return JsonResponse({'success': False}) 
+            return JsonResponse({'success': False})
     except (KeyError, TypeError) as e:
-        return JsonResponse({'success': 'False, event not exists', 'error': e.args[0]})
-
-    
+        return JsonResponse({'success': False, 'error': e.args[0]})
 
 
-
+def event(request, event_id):
+    try:
+        event = Event.objects.get(pk=event_id)
+    except Event.DoesNotExist:
+        return JsonResponse({'error': 'event does not exist'})
+    return JsonResponse(event.serialize())
