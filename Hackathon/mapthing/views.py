@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.http import JsonResponse, QueryDict
@@ -21,11 +23,13 @@ def create_event(request):
         description = require(event_data, 'description', str)
         latitude = require(event_data, 'latitude', float)
         longitude = require(event_data, 'longitude', float)
-        start_time = require(event_data, 'startTime', float)
-        end_time = require(event_data, 'endTime', float)
+        start_time = datetime.fromtimestamp(
+            require(event_data, 'startTime', float))
+        end_time = datetime.fromtimestamp(
+            require(event_data, 'endTime', float))
         min_people = get(event_data, 'minPeople')
         max_people = get(event_data, 'maxPeople')
-    except (KeyError, TypeError) as e:
+    except (KeyError, TypeError, ValueError) as e:
         return JsonResponse({'success': False, 'error': e.args[0]})
 
     event = Event(event_name=name,
