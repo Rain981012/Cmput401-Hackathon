@@ -1,12 +1,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.utils import timezone
-
-class User(models.Model):
-    user_name = models.CharField(max_length=70)
-    
-    def __str__(self):
-        return self.user_name
+from django.contrib.auth.models import User
 
 class Event(models.Model):
     event_name = models.CharField(max_length=200)
@@ -14,7 +9,7 @@ class Event(models.Model):
     description = models.CharField(max_length=400)
     longitude = models.FloatField()
     latitude = models.FloatField()
-    start_date = models.DateTimeField('published date')
+    start_date = models.DateTimeField('start date')
     end_date = models.DateTimeField('end date')
     min_number_people = models.IntegerField(null=True)
     max_number_people = models.IntegerField(null=True)
