@@ -2,7 +2,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.http import JsonResponse, QueryDict
 from django.contrib.auth.models import User
-from .models import Event
+from .models import Event,Attend
 
 from .util import get, require
 
@@ -52,3 +52,24 @@ def create_user(request):
 
     user = User.objects.create_user(name)
     return JsonResponse({'success': True, 'userId': user.id})
+
+def attend_event(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'invalid request'})
+    try:
+        eventID = require(request.POST, 'eventId', str)
+        event = Event.objects.get(id=eventID)
+        attendee = request.user
+        attend = Attend(attendee, event)
+        attend.save()
+        if event.exists() == True:
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False}) 
+    except (KeyError, TypeError) as e:
+        return JsonResponse({'success': 'False, event not exists', 'error': e.args[0]})
+
+    
+
+
+
