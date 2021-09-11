@@ -8,4 +8,5 @@ urlpatterns = [
     path('api/create-event/', views.create_event, name='create-event'),
     path('api/attend-event/', views.attend_event, name='attend-event'),
     path('api/event/<str:event_id>/', views.event, name='event'),
+    path('api/get-events/', views.get_events, name='get-event')
 ]
