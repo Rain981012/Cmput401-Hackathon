@@ -22,3 +22,7 @@ class Event(models.Model):
     
     def __str__(self) -> str:
         return self.event_name
+    
+class Attend(models.Model):
+    attendee = models.ForeignKey(User, on_delete=CASCADE)
+    associated_event = models.ForeignKey(Event, on_delete=CASCADE)
