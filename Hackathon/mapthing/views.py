@@ -1,4 +1,5 @@
 from datetime import datetime
+from json.encoder import JSONEncoder
 from django.db.models.deletion import RestrictedError
 from django.utils import timezone
 from django.http.response import HttpResponse
@@ -82,3 +83,9 @@ def event(request, event_id):
     except Event.DoesNotExist:
         return JsonResponse({'error': 'event does not exist'})
     return JsonResponse(event.serialize())
+
+def get_events(request):
+    if request.method == 'GET':
+        result = Event.objects.all().filter(end_date__gte=timezone.now())
+        events = list(map(Event.serialize, result))
+        return JsonResponse({'events': events})
