@@ -14,7 +14,7 @@ class Event(models.Model):
     description = models.CharField(max_length=400)
     longitude = models.FloatField()
     latitude = models.FloatField()
-    start_date = models.DateTimeField('published date')
+    start_date = models.DateTimeField('start date')
     end_date = models.DateTimeField('end date')
     min_number_people = models.IntegerField(null=True)
     max_number_people = models.IntegerField(null=True)
