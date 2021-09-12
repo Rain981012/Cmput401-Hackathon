@@ -1,12 +1,11 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.utils import timezone
-from django.contrib.auth.models import User
 
 
 class Event(models.Model):
     event_name = models.CharField(max_length=200)
-    creator = models.ForeignKey(User, on_delete=CASCADE)
+    creator_name = models.CharField(max_length=200)
     description = models.CharField(max_length=400)
     longitude = models.FloatField()
     latitude = models.FloatField()
@@ -29,7 +28,7 @@ class Event(models.Model):
             'startTime': self.start_date.timestamp(),
             'endTime': self.end_date.timestamp(),
             'public': self.public,
-            'creator': str(self.creator.id)
+            'creator': self.creator_name,
         }
         if self.min_number_people is not None:
             data['minPeople'] = self.min_number_people
@@ -38,5 +37,5 @@ class Event(models.Model):
 
 
 class Attend(models.Model):
-    attendee = models.ForeignKey(User, on_delete=CASCADE)
+    attendee_name = models.CharField(max_length=200)
     associated_event = models.ForeignKey(Event, on_delete=CASCADE)
